@@ -1,0 +1,31 @@
+stathatd is a small daemon for reporting to StatHat (stathat.com)
+
+The daemon listens on a TCP port, reads a single line from each connecting
+client, and increments a stathat counter named by that line.
+
+Install stathatd:
+	go get github.com/nf/stathatd
+
+Start the daemon with your stathat user key:
+  stathatd -key=you@example.com
+
+Increment the 'hello' stat by one:
+  echo hello | nc localhost 6007
+
+The idea is that stathatd can be easily hooked into parts of your system.
+For example, I am tracking each invocation of the 'go' command with this
+wrapper script that lives at $HOME/bin/go:
+
+	#!/bin/bash
+	
+	echo "go" | nc localhost 6007
+	if [ "$1" != "" ]; then
+	  echo "go $1" | nc localhost 6007
+	fi
+	$HOME/go/bin/go $@
+	exit $?
+
+Any questions, mail me.
+
+Andrew Gerrand <adg@golang.org>
+
